@@ -88,7 +88,7 @@ Provides:
 ## Clone Repo
 
 ```bash
-git clone <your_repo_url>
+git clone https://github.com/c-akanksha/learniverse-backend.git
 cd learniverse-backend
 ```
 
