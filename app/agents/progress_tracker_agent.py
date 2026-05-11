@@ -1,63 +1,49 @@
-from app.database.db import db
 from app.services.openai_service import client
 import json
 
-async def save_progress(data):
-    result = await db.progress.insert_one(data)
-    return str(result.inserted_id)
+def calculate_progress(modules):
 
-async def get_learner_progress(learner_id):
-    progress = await db.progress.find({"learner_id": learner_id}).to_list(length = 100)
-    for item in progress:
-        item["_id"] = str(item["_id"])
+    total = len(modules)
 
-    return progress
+    completed = sum(1 for m in modules if m.get("completed"))
 
-async def track_learner_progress(learner_id):
-    progress = await get_learner_progress(learner_id)
+    scores = [
+        m.get("quiz", {}).get("score", 0)
+        for m in modules
+        if m.get("quiz")
+    ]
 
-    if not progress:
-        return {
-            "is_new_learner": True,
-            "message": "No learning activity yet.",
-            "recommendations": "Start your first course"
-        }
+    avg = sum(scores) / len(scores) if scores else 0
 
-    total_modules = len(progress)
+    return {
+        "total_modules": total,
+        "completed_modules": completed,
+        "completion_percentage": round((completed / total) * 100, 2) if total else 0,
+        "average_score": round(avg, 2)
+    }
 
-    completed_modules = len([
-        p for p in progress
-        if p.get("complted")
-    ])
-
-    average_score = sum(
-        p.get("score", 0)
-        for p in progress
-    ) / total_modules
-
+async def track_learner_progress(modules: list):
+    modules_with_quiz = [
+        m for m in modules
+        if m.get("quiz")
+    ]
     prompt = f"""
-        Analyze learner progress.
-        
-        Progress Data: {progress}
-        
-        Generate:
-        - learner summary
-        - improvement trends
-        - strengths
-        - weak areas
-        - motivation feedback
-        - next learning recommendations
-        
-        Return JSON format:
-        
-        {{
-            "summary": "",
-            "improvement_trends": "",
-            "strengths": "",
-            "weak_areas": "",
-            "motivation_feedback": "",
-            "next_steps": []
-        }}
+    You are Orion — an AI learning intelligence analyst.
+
+    Analyze learner data:
+
+    {json.dumps(modules_with_quiz, indent=2)}
+
+    Generate:
+
+    - learner_summary
+    - improvement_trends
+    - strengths
+    - weak_areas
+    - motivation_feedback
+    - next_learning_recommendations
+
+    Return ONLY JSON.
     """
 
     response = client.chat.completions.create(
@@ -66,22 +52,19 @@ async def track_learner_progress(learner_id):
         messages=[
             {
                 "role": "system",
-                "content": "You are an AI progress tracking coach",
+                "content": "You are Orion — learning intelligence engine. Return ONLY JSON."
             },
-            {
-                "role": "user",
-                "content": prompt
-            }
+            {"role": "user", "content": prompt}
         ]
     )
 
-    raw_response = json.loads(response.choices[0].message.content)
+    ai_result = json.loads(response.choices[0].message.content)
+    progress = calculate_progress(modules)
 
     return {
-        "is_new_learner": "False",
-        "total_modules": total_modules,
-        "completed_modules": completed_modules,
-        "completion_percentage": round((completed_modules/total_modules)*100, 2),
-        "average_score": round(average_score, 2),
-        "progress_analysis": raw_response
+        "total_modules": progress["total_modules"],
+        "completed_modules": progress["completed_modules"],
+        "completion_percentage": progress["completion_percentage"],
+        "average_score": progress["average_score"],
+        "progress_analysis": ai_result
     }

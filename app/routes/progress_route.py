@@ -1,17 +1,29 @@
 from fastapi import APIRouter
-from app.agents.progress_tracker_agent import ( save_progress, track_learner_progress )
-from app.models.base_models import ProgressRequest
+from app.agents.progress_tracker_agent import track_learner_progress
+from app.database.db import db
 
 router = APIRouter()
 
-@router.post("/save")
-async def save_learning_progress(request: ProgressRequest):
-    progress_data = request.model_dump()
-    inserted_id = await save_progress(progress_data)
-    return { "success": True, "inserted_id": inserted_id }
 
 @router.get("/generate/{learner_id}")
 async def generate_progress(learner_id: str):
-    analysis = await track_learner_progress(learner_id)
 
-    return { "success": True, "data": analysis }
+    course = await db.courses.find_one({"learner_id": learner_id})
+
+    if not course:
+        return {"success": False, "message": "No course found"}
+
+    modules = course.get("modules", [])
+    feedback_data = [
+        {
+            "module_number": m.get("module_number"),
+            "title": m.get("title"),
+            "completed": m.get("completed"),
+            "quiz": m.get("quiz", {})
+        }
+        for m in modules
+    ]
+
+    analysis = await track_learner_progress(feedback_data)
+
+    return {"success": True, "data": analysis}

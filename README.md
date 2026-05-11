@@ -1,13 +1,13 @@
 # 🚀 Learniverse
 
-Welcome to **Learniverse** — your AI-powered personalized learning universe 🌌✨
+Welcome to **Learniverse** — an AI-powered adaptive learning universe 🌌✨
 
-Learniverse is an **Agentic AI Learning Platform** that dynamically:
-- 📚 Generates courses
-- ❓ Creates quizzes
+Learniverse is a multi-agent AI learning platform that:
+- 📚 Generates personalized courses
+- ❓ Creates multi-level quizzes
 - 🧠 Evaluates learner understanding
-- 📈 Tracks progress
-- 🎯 Provides AI-powered feedback
+- 📈 Tracks learning progress
+- 🎯 Provides AI-powered feedback & recommendations
 
 Built using:
 - ⚡ FastAPI
@@ -17,36 +17,37 @@ Built using:
 
 ---
 
-# 🌟 Features
+# 🌟 AI Agents
 
-## 🧠 Course Generation Agent
-Generate personalized learning modules based on:
-- skill
-- level
-- number of modules
-
----
-
-## ❓ Question & Feedback Agent
-After every module:
-- generates assessment questions
-- evaluates learner answers
-- gives AI-powered feedback
-- scores learner performance
+| Agent | Role | Personality |
+|---|---|---|
+| **Astra** ✨ | Course Generation Agent | Creative learning architect |
+| **Quill** 🪶 | Quiz + Feedback Agent | Friendly but strict AI tutor |
+| **Orion** 🌌 | Progress Tracking Agent | Motivational learning analyst |
 
 ---
 
-## 📈 Progress Tracker Agent
-Tracks:
-- completed modules
-- quiz scores
-- learning patterns
-- strengths & weak areas
+# 🧠 What Learniverse Does
 
-Provides:
-- AI-generated progress analysis
-- recommendations
-- improvement trends
+Learniverse creates a personalized AI learning flow:
+
+```txt
+User Login/Register
+        ↓
+Astra generates personalized course
+        ↓
+User completes module
+        ↓
+Quill generates quiz (easy + hard)
+        ↓
+User answers quiz
+        ↓
+Quill evaluates all answers together
+        ↓
+Feedback gets saved
+        ↓
+Orion analyzes overall learner progress
+```
 
 ---
 
@@ -54,16 +55,18 @@ Provides:
 
 ```txt
                 ┌────────────────────┐
-                │   Course Agent     │
+                │  Astra ✨          │
+                │ Course Generator   │
                 └─────────┬──────────┘
                           ↓
                 ┌────────────────────┐
-                │  Quiz Agent        │
-                │  + Feedback Agent  │
+                │  Quill 🪶          │
+                │ Quiz + Feedback    │
                 └─────────┬──────────┘
                           ↓
                 ┌────────────────────┐
-                │ Progress Tracker   │
+                │  Orion 🌌          │
+                │ Progress Analyst   │
                 └─────────┬──────────┘
                           ↓
                      MongoDB 🍃
@@ -76,10 +79,11 @@ Provides:
 | Tech | Purpose |
 |---|---|
 | FastAPI | Backend APIs |
-| OpenAI | AI agents |
-| MongoDB | Learner progress storage |
-| Render | Deployment |
+| OpenAI API | AI agents |
+| MongoDB | Course & learner storage |
+| Motor | Async MongoDB driver |
 | Python | Backend language |
+| Render | Deployment |
 
 ---
 
@@ -94,7 +98,7 @@ cd learniverse-backend
 
 ---
 
-## Install Dependencies
+# 📥 Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -148,8 +152,8 @@ POST /api/learner/create
 
 ```json
 {
-    "email": "test@test.com",
-    "name": "Test User"
+  "name": "Akanksha",
+  "email": "test@test.com"
 }
 ```
 
@@ -157,14 +161,16 @@ POST /api/learner/create
 
 ```json
 {
-    "success": true,
-    "learner_id": "6a01dfg6b52f2b9f443f"
+  "success": true,
+  "learner_id": "681f92c0b4d2c34f12345678"
 }
 ```
 
 ---
 
-# 👤 Login
+# 👤 Login Learner
+
+## Endpoint
 
 ```http
 POST /api/learner/login
@@ -174,7 +180,7 @@ POST /api/learner/login
 
 ```json
 {
-    "email": "test@test.com"
+  "email": "test@test.com"
 }
 ```
 
@@ -182,13 +188,16 @@ POST /api/learner/login
 
 ```json
 {
-    "success": true,
-    "learner_id": "6a01dfg6b52f2b9f443f"
+  "success": true,
+  "learner_id": "681f92c0b4d2c34f12345678"
 }
 ```
+
 ---
 
-# 🧠 Generate Course
+# 📚 Generate Course
+
+Astra creates personalized learning modules.
 
 ## Endpoint
 
@@ -202,7 +211,8 @@ POST /api/learning/generate-course
 {
   "skill": "React",
   "level": "Beginner",
-  "num_of_modules": 5 // 5 by default
+  "learner_id": "681f92c0b4d2c34f12345678",
+  "num_of_modules": 5
 }
 ```
 
@@ -214,14 +224,14 @@ POST /api/learning/generate-course
   "data": {
     "course_title": "React for Beginners",
     "level": "Beginner",
-    "total_estimated_time": "10 hours",
     "modules": [
       {
         "module_number": 1,
-        "title": "Introduction to React",
-        "description": "Learn the basics of React and component-based architecture.",
-        "reference": "https://reactjs.org/docs/getting-started.html",
-        "estimated_time": "2 hours"
+        "title": "Introduction to ReactJS",
+        "description": "Learn React fundamentals.",
+        "reference": "https://reactjs.org",
+        "estimated_time": "2 hours",
+        "completed": false
       }
     ]
   }
@@ -230,7 +240,11 @@ POST /api/learning/generate-course
 
 ---
 
-# ❓ Generate Question
+# ❓ Generate Quiz
+
+Quill generates:
+- 1 easy question
+- 1 hard question
 
 ## Endpoint
 
@@ -242,8 +256,9 @@ POST /api/generate/question
 
 ```json
 {
+  "learner_id": "681f92c0b4d2c34f12345678",
   "skill_name": "React",
-  "module_title": "React Hooks"
+  "module_title": "Introduction to ReactJS"
 }
 ```
 
@@ -253,15 +268,25 @@ POST /api/generate/question
 {
   "success": true,
   "data": {
-    "question": "What is JSX?",
-    "difficulty": "easy"
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is JSX?"
+      },
+      {
+        "difficulty": "hard",
+        "question": "Explain how React reconciliation works."
+      }
+    ]
   }
 }
 ```
 
 ---
 
-# 🧠 Evaluate Learner Answer
+# 🧠 Evaluate Quiz Answers
+
+Quill evaluates ALL answers together.
 
 ## Endpoint
 
@@ -273,9 +298,20 @@ POST /api/generate/feedback
 
 ```json
 {
-  "question": "What is JSX?",
-  "expected_answer": "JSX allows writing HTML-like syntax in JavaScript.",
-  "user_answer": "It allows us to write HTML in React."
+  "learner_id": "681f92c0b4d2c34f12345678",
+  "module_title": "Introduction to ReactJS",
+  "qa_pairs": [
+    {
+      "question": "What is JSX?",
+      "answer": "JSX lets us write HTML-like syntax in React.",
+      "difficulty": "easy"
+    },
+    {
+      "question": "Explain virtual DOM.",
+      "answer": "Virtual DOM compares differences before updating UI.",
+      "difficulty": "hard"
+    }
+  ]
 }
 ```
 
@@ -285,10 +321,18 @@ POST /api/generate/feedback
 {
   "success": true,
   "data": {
-    "score": 8,
-    "feedback": "Good understanding of JSX.",
-    "strengths": ["Understood HTML-like syntax concept."],
-    "improvements": ["Could explain JavaScript integration better."],
+    "total_score": 8,
+    "correctness_summary": "Strong foundational understanding.",
+    "strengths": [
+      "Good understanding of JSX"
+    ],
+    "improvements": [
+      "Could explain reconciliation better"
+    ],
+    "conceptual_gaps": [
+      "Diffing algorithm"
+    ],
+    "final_feedback": "Great progress overall!",
     "correct": true
   }
 }
@@ -296,49 +340,19 @@ POST /api/generate/feedback
 
 ---
 
-# 💾 Save Learner Progress
-
-## Endpoint
-
-```http
-POST /api/progress/save
-```
-
-## Request
-
-```json
-{
-  "learner_id": "681f92c0b4d2c34f12345678",
-  "skill_name": "React",
-  "module_title": "React Hooks",
-  "completed": true,
-  "score": 8
-}
-```
-
-## Response
-
-```json
-{
-  "success": true,
-  "inserted_id": "681fa92cb4d2c34f99887766"
-}
-```
-
----
-
 # 📈 Generate Progress Analysis
 
+Orion analyzes:
+- learning behavior
+- strengths
+- weak areas
+- trends
+- next learning recommendations
+
 ## Endpoint
 
 ```http
-GET api/progress/generate/{learner_id}
-```
-
-## Example
-
-```http
-GET api/progress/generate/681f92c0b4d2c34f12345678
+GET /api/progress/generate/{learner_id}
 ```
 
 ## Response
@@ -348,17 +362,21 @@ GET api/progress/generate/681f92c0b4d2c34f12345678
   "success": true,
   "data": {
     "total_modules": 5,
-    "completed_modules": 4,
-    "completion_percentage": 80,
+    "completed_modules": 3,
+    "completion_percentage": 60,
     "average_score": 7.5,
     "progress_analysis": {
-      "summary": "Learner is improving steadily.",
-      "improvement_trend": "Positive",
-      "strengths": "The learner demonstrates competency in React Hooks, indicating an ability to understand and apply modern React features effectively.",
-      "weak_areas": "Based on the current data, no specific weak areas are identified. Continued assessment across multiple modules is recommended to pinpoint areas needing enhancement.",
+      "learner_summary": "Learner shows steady growth.",
+      "improvement_trends": ["Positive"],
+      "strengths": [
+        "Strong React fundamentals"
+      ],
+      "weak_areas": [
+        "Advanced React lifecycle concepts"
+      ],
       "motivation_feedback": "Excellent consistency!",
-      "next_steps": [
-        "Practice advanced Hooks concepts."
+      "next_learning_recommendations": [
+        "Practice advanced Hooks"
       ]
     }
   }
@@ -367,38 +385,52 @@ GET api/progress/generate/681f92c0b4d2c34f12345678
 
 ---
 
+# 💾 MongoDB Stores
+
+- Learners
+- Courses
+- Modules
+- Quiz questions
+- Answers
+- AI feedback
+- Learning analytics
+
+---
+
 # 🌍 Deployment
 
-Backend deployed on:
-
+Backend:
 ```txt
 Render
 ```
 
-Frontend planned on:
-
+Frontend:
 ```txt
-Vercel
+gh-pages
 ```
 
 ---
 
 # 🚀 Future Improvements
 
-- 🔐 Authentication
-- 🧠 Long-term AI Memory
-- 🎙️ Voice Learning
-- 📊 Dashboard Analytics
-- 🧩 Adaptive Difficulty
-- 📚 RAG-based Learning
+- 🔐 JWT Authentication
+- 🧠 Long-term AI memory
+- 💬 AI Tutor Chat
+- 🎙️ Voice learning
+- 📊 Dashboard analytics
+- 🧩 Adaptive learning paths
+- 📚 RAG-based contextual learning
 - 🤝 Multi-agent orchestration
-- 🧑‍🏫 AI Mentor
+- 🎮 Gamification
 
 ---
 
-# 💡 Inspiration
+# 👩‍💻 Developed By
 
-Learniverse was built to explore how **Agentic AI systems** can create adaptive, intelligent, and personalized learning experiences.
+**Akanksha Chandrashekar**
+
+LinkedIn:  
+https://linkedin.com/in/c-akanksha
 
 ---
 

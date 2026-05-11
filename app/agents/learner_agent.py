@@ -4,8 +4,7 @@ async def create_learner(data):
     result = await db.learners.insert_one(data)
     return str(result.inserted_id)
 
+
 async def fetch_learner(email: str):
-    existing_user = await db.learners.find_one({"email": email})
-    if existing_user:
-        return str(existing_user["_id"])
-    return ""
+    user = await db.learners.find_one({"email": email})
+    return str(user["_id"]) if user else ""
