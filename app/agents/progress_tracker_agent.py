@@ -8,7 +8,7 @@ def calculate_progress(modules):
     completed = sum(1 for m in modules if m.get("completed"))
 
     scores = [
-        m.get("quiz", {}).get("score", 0)
+        m.get("quiz", {}).get("evaluation", {}).get("total_score", 0)
         for m in modules
         if m.get("quiz")
     ]
@@ -36,12 +36,12 @@ async def track_learner_progress(modules: list):
 
     Generate:
 
-    - learner_summary
-    - improvement_trends
-    - strengths
-    - weak_areas
-    - motivation_feedback
-    - next_learning_recommendations
+    - learner_summary as string
+    - improvement_trends as array of strings
+    - strengths as array of strings
+    - weak_areas as array of strings
+    - motivation_feedback as string
+    - next_learning_recommendations as array of strings
 
     Return ONLY JSON.
     """

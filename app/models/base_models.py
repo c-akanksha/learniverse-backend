@@ -9,6 +9,7 @@ class CourseRequest(BaseModel):
 
 class QuestionRequest(BaseModel):
     learner_id: str
+    course_id: str
     skill_name: str
     module_title: str
 
@@ -20,6 +21,7 @@ class QAPair(BaseModel):
 
 class FeedbackRequest(BaseModel):
     learner_id: str
+    course_id: str
     module_title: str
     qa_pairs: List[QAPair]
 
@@ -36,6 +38,3 @@ class LearnerRequest(BaseModel):
 
 class LoginRequest(BaseModel):
     email: str
-
-class LearnerRequest(BaseModel):
-    learner_id: str

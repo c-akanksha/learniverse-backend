@@ -1,3 +1,4 @@
+from bson import ObjectId
 from fastapi import APIRouter
 from app.agents.progress_tracker_agent import track_learner_progress
 from app.database.db import db
@@ -5,10 +6,10 @@ from app.database.db import db
 router = APIRouter()
 
 
-@router.get("/generate/{learner_id}")
-async def generate_progress(learner_id: str):
+@router.get("/generate/{learner_id}/{course_id}")
+async def generate_progress(learner_id: str, course_id: str):
 
-    course = await db.courses.find_one({"learner_id": learner_id})
+    course = await db.courses.find_one({"learner_id": learner_id, "_id": ObjectId(course_id),})
 
     if not course:
         return {"success": False, "message": "No course found"}

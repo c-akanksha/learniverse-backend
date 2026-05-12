@@ -257,6 +257,7 @@ POST /api/generate/question
 ```json
 {
   "learner_id": "681f92c0b4d2c34f12345678",
+  "course_id": "1234565",
   "skill_name": "React",
   "module_title": "Introduction to ReactJS"
 }
@@ -284,7 +285,7 @@ POST /api/generate/question
 
 ---
 
-# 🧠 Evaluate Quiz Answers
+# 🧠 Generate Feedback
 
 Quill evaluates ALL answers together.
 
@@ -299,6 +300,7 @@ POST /api/generate/feedback
 ```json
 {
   "learner_id": "681f92c0b4d2c34f12345678",
+  "course_id": "1234565",
   "module_title": "Introduction to ReactJS",
   "qa_pairs": [
     {
@@ -352,7 +354,7 @@ Orion analyzes:
 ## Endpoint
 
 ```http
-GET /api/progress/generate/{learner_id}
+GET /api/progress/generate/{learner_id}/{course_id}
 ```
 
 ## Response
@@ -380,6 +382,40 @@ GET /api/progress/generate/{learner_id}
       ]
     }
   }
+}
+```
+
+---
+
+# 🧠 Fetch All Courses
+
+Fetches all courses belonging to a learner.
+
+## Endpoint
+
+```http
+POST /api/learning/{learner_id}
+```
+## Response
+
+```json
+{ 
+  "success": true, 
+  "data": [ 
+    { "_id": "course_id_1", 
+      "course_title": "ReactJS Fundamentals", 
+      "level": "Beginner", 
+      "completed_modules": 1,
+      "total_modules": 5
+    }, 
+    { 
+      "_id": "course_id_2", 
+      "course_title": "Python Basics", 
+      "level": "Intermediate", 
+      "completed_modules": 2,
+      "total_modules": 7
+    } 
+  ]
 }
 ```
 

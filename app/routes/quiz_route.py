@@ -1,3 +1,4 @@
+from bson import ObjectId
 from fastapi import APIRouter
 from app.agents.quiz_agent import generate_feedback, generate_questions
 from app.database.db import db
@@ -9,7 +10,7 @@ router = APIRouter()
 @router.post("/question")
 async def create_question(request: QuestionRequest):
     course = await db.courses.find_one(
-        {"learner_id": request.learner_id}
+        {"learner_id": request.learner_id, "_id": ObjectId(request.course_id),}
     )
 
     updated = []
@@ -39,7 +40,7 @@ async def create_feedback(request: FeedbackRequest):
     feedback = generate_feedback(qa_pairs)
 
     course = await db.courses.find_one(
-        {"learner_id": request.learner_id}
+        {"learner_id": request.learner_id, "_id": ObjectId(request.course_id),}
     )
 
     updated = []
