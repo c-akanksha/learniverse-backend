@@ -54,7 +54,7 @@ async def create_feedback(request: FeedbackRequest):
         updated.append(m)
 
     await db.courses.update_one(
-        {"learner_id": request.learner_id},
+        {"learner_id": request.learner_id, "_id": ObjectId(request.course_id),},
         {"$set": {"modules": updated}}
     )
 
