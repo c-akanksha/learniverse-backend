@@ -14,6 +14,9 @@ def generate_course(skill, level, num_modules, learner_state=None):
     Learner state:
     {json.dumps(learner_state or {}, indent=2)}
 
+    RULES FOR REFERENCE:
+    - Return relevant URL always.
+    
     Return ONLY JSON:
     {{
       "course_title": "",
