@@ -1,5 +1,7 @@
-from app.services.openai_service import client
 import json
+
+from app.services.openai_service import client
+
 
 def calculate_progress(modules):
 
@@ -19,14 +21,12 @@ def calculate_progress(modules):
         "total_modules": total,
         "completed_modules": completed,
         "completion_percentage": round((completed / total) * 100, 2) if total else 0,
-        "average_score": round(avg, 2)
+        "average_score": round(avg, 2),
     }
 
+
 async def track_learner_progress(modules: list):
-    modules_with_quiz = [
-        m for m in modules
-        if m.get("quiz")
-    ]
+    modules_with_quiz = [m for m in modules if m.get("quiz")]
     prompt = f"""
     You are Orion — an AI learning intelligence analyst.
 
@@ -52,10 +52,10 @@ async def track_learner_progress(modules: list):
         messages=[
             {
                 "role": "system",
-                "content": "You are Orion — learning intelligence engine. Return ONLY JSON."
+                "content": "You are Orion — learning intelligence engine. Return ONLY JSON.",
             },
-            {"role": "user", "content": prompt}
-        ]
+            {"role": "user", "content": prompt},
+        ],
     )
 
     ai_result = json.loads(response.choices[0].message.content)
@@ -66,5 +66,5 @@ async def track_learner_progress(modules: list):
         "completed_modules": progress["completed_modules"],
         "completion_percentage": progress["completion_percentage"],
         "average_score": progress["average_score"],
-        "progress_analysis": ai_result
+        "progress_analysis": ai_result,
     }

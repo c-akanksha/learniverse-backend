@@ -1,5 +1,7 @@
-from app.services.openai_service import client
 import json
+
+from app.services.openai_service import client
+
 
 def generate_questions(skill_name: str, module_title: str):
 
@@ -37,11 +39,12 @@ def generate_questions(skill_name: str, module_title: str):
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": "You are Quill — quiz generator."},
-            {"role": "user", "content": prompt}
-        ]
+            {"role": "user", "content": prompt},
+        ],
     )
 
     return json.loads(response.choices[0].message.content)
+
 
 def generate_feedback(qa_pairs: list):
 
@@ -76,8 +79,8 @@ def generate_feedback(qa_pairs: list):
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": "You are Quill — evaluation engine."},
-            {"role": "user", "content": prompt}
-        ]
+            {"role": "user", "content": prompt},
+        ],
     )
 
     return json.loads(response.choices[0].message.content)

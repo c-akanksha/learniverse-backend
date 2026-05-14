@@ -1,5 +1,6 @@
 from app.database.db import db
 
+
 async def create_learner(data):
     result = await db.learners.insert_one(data)
     return str(result.inserted_id)

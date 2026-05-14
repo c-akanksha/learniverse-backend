@@ -1,10 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
-from app.routes.learning_routes import router as learning_router
-from app.routes.quiz_route import router as quiz_router
-from app.routes.progress_route import router as progress_router
-from app.routes.learner_route import router as learner_router
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.routes.learner_route import router as learner_router
+from app.routes.learning_routes import router as learning_router
+from app.routes.progress_route import router as progress_router
+from app.routes.quiz_route import router as quiz_router
 
 app = FastAPI(title="Learniverse AI")
 
@@ -27,9 +28,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def home():
     return {"message": "Learniverse is up and running!"}
+
 
 app.include_router(learning_router, prefix="/api/learning")
 app.include_router(quiz_router, prefix="/api/generate")

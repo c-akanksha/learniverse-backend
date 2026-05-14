@@ -1,8 +1,9 @@
 from fastapi import APIRouter
+
 from app.agents.course_agent import generate_course
-from app.database.course_db import save_course, get_course
-from app.models.base_models import CourseRequest
+from app.database.course_db import get_course, save_course
 from app.database.db import db
+from app.models.base_models import CourseRequest
 
 router = APIRouter()
 
@@ -11,11 +12,13 @@ router = APIRouter()
 async def create_course(request: CourseRequest):
 
     # CHECK IF COURSE ALREADY EXISTS
-    existing_course = await db.courses.find_one({
-        "learner_id": request.learner_id,
-        "course_title": request.skill,
-        "level": request.level
-    })
+    existing_course = await db.courses.find_one(
+        {
+            "learner_id": request.learner_id,
+            "course_title": request.skill,
+            "level": request.level,
+        }
+    )
 
     # RETURN EXISTING COURSE
     if existing_course:
@@ -24,24 +27,17 @@ async def create_course(request: CourseRequest):
         return {
             "success": True,
             "message": "Course already exists",
-            "data": existing_course
+            "data": existing_course,
         }
 
     # GENERATE NEW COURSE
-    course = generate_course(
-        request.skill,
-        request.level,
-        request.num_of_modules
-    )
+    course = generate_course(request.skill, request.level, request.num_of_modules)
 
     course["learner_id"] = request.learner_id
 
     saved = await save_course(course)
 
-    return {
-        "success": True,
-        "data": saved
-    }
+    return {"success": True, "data": saved}
 
 
 @router.get("/{learner_id}/{course_id}")
@@ -54,12 +50,11 @@ async def fetch_course(learner_id: str, course_id: str):
 
     return {"success": True, "data": course}
 
+
 @router.get("/{learner_id}")
 async def get_courses(learner_id: str):
 
-    courses = await db.courses.find({
-        "learner_id": learner_id
-    }).to_list(length=None)
+    courses = await db.courses.find({"learner_id": learner_id}).to_list(length=None)
 
     formatted_courses = []
 
@@ -68,20 +63,16 @@ async def get_courses(learner_id: str):
 
         total_modules = len(modules)
 
-        completed_modules = len([
-            m for m in modules if m.get("quiz")
-        ])
+        completed_modules = len([m for m in modules if m.get("quiz")])
 
-        formatted_courses.append({
-            "_id": str(course["_id"]),
-            "course_title": course.get("course_title"),
-            "level": course.get("level"),
+        formatted_courses.append(
+            {
+                "_id": str(course["_id"]),
+                "course_title": course.get("course_title"),
+                "level": course.get("level"),
+                "total_modules": total_modules,
+                "completed_modules": completed_modules,
+            }
+        )
 
-            "total_modules": total_modules,
-            "completed_modules": completed_modules,
-        })
-
-    return {
-        "success": True,
-        "data": formatted_courses
-    }
+    return {"success": True, "data": formatted_courses}
